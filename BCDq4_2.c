@@ -224,6 +224,29 @@ void addBCD(unsigned char* result, unsigned char const* one, unsigned char const
 		*bitnoresult = bit_i+1;
 }
 
+int bcd_compare(unsigned char* p_n1, unsigned char* p_n2,int *bitno1,int *bitno2) {
+
+	int size = ((bitno1 > bitno2) ? bitno1 : bitno2); //if bitno1==bitno2 then condition false and second result, which would be the same as bitno1
+
+	if ((p_n1[0] == 0) & (p_n2[0] == 0xFF)) //for sure p_n1 bigger
+		return 1;
+
+	if ((p_n1[0] == 0xFF) & (p_n2[0] == 0)) //for sure p_n2 smaller
+		return -1;
+
+	if (p_n1[0] == p_n2[0]) {	//lets loop
+		for (int i = (size-1); i >=0; i--) {
+			if (p_n1[100 - i] > p_n2[100 - i])
+				return 1;
+			if (p_n1[100 - i] < p_n2[100 - i])
+				return -1;
+		}
+		return 0;
+	}
+
+}
+
+
 int main() {
 
 	//addition
@@ -317,4 +340,10 @@ int main() {
 	unsigned char BCDresult5[101] = { 0 };
 	addBCD(BCDresult5, BCD9, BCD10, bitno9, bitno10, &bitnoresult5);
 	printBCD(BCDresult5, bitnoresult5);
+
+	printf("Compare 205 and 1192 : %d\n", bcd_compare(BCD9, BCD10,bitno9,bitno10));
+	printf("Compare -205 and 92 : %d\n", bcd_compare(BCD7, BCD8,bitno7,bitno8));
+	printf("Compare 95 and -116 : %d\n", bcd_compare(BCD5, BCD6,bitno5,bitno6));
+	printf("Compare -116 and 105 : %d\n", bcd_compare(BCD3, BCD4,bitno3,bitno4));
+	printf("Compare 205 and 205 : %d\n", bcd_compare(BCD9, BCD9,bitno9,bitno9));
 }
