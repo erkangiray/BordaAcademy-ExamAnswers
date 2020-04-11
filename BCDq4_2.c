@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//input parameters: number in BCD, which is produced by the getBCD function
+//					number of bits of the number
+//
+//what it does:		first prints out the sign bit of the BCD number
+//					continues to print out the digits of the BCD number in byte form
+//					if number is 5 it shows 0000 0401
 void printBCD(unsigned char* BCD, int bitno) {
 	printf("The sign byte:%d%d%d%d%d%d%d%d\n\n", (BCD[0] & 0x80), (BCD[0] & 0x40), (BCD[0] & 0x20), (BCD[0] & 0x10), (BCD[0] & 0x08), (BCD[0] & 0x04), (BCD[0] & 0x02), (BCD[0] & 0x01));
 	for (int i = 0; i < bitno; i++) {
@@ -8,6 +14,14 @@ void printBCD(unsigned char* BCD, int bitno) {
 	}
 }
 
+
+//input parameters: number to be converted to BCD
+//					a pointer to a 101 element empty array of unsigned characters, which will hold the number in BCD 
+//					pointer to an integer which will hold the number of bits of the number
+//
+//what it does:		calculates number of bits of the number, writes it into the integer sent,all other functions use this
+//					the digits of the number are collected in the elements of the array in BCD form
+//					the ZEROth element of the array is ZERO for POSITIVE, 1111 1111 for NEGATIVE number
 void getBCD(int number, unsigned char* BCD, int* bitno) {
 	int s_l = 0;
 	int n_loop = number;
@@ -38,13 +52,14 @@ void getBCD(int number, unsigned char* BCD, int* bitno) {
 //BCD[101 - i] += (number % 10);
 //how to check whether a number is actually encoded properly?
 //unsigned char a = 5;
-
 //printf("print d : %d%d%d%d%d%d%d%d\n", (a & 0x80), (a & 0x40), (a & 0x20), (a & 0x10), (a & 0x08), (a & 0x04), (a & 0x02), (a & 0x01));
-
 //above code prints 0000 0401 and that four is printed in decimal because of %d
 //this means BCD[101-i] += number%10 actually gets the number properly bit by bit
 
-
+//input parameters: pointer to result array, and BCD arrays to be summed
+//					no of bits of the summed numbers, no of bits of the result
+//
+//what it does:		adds any two BCD numbers correctly, and writes them into the result array
 void addBCD(unsigned char* result, unsigned char const* one, unsigned char const* two, int bitno1, int bitno2,int *bitnoresult) {
 	int size = 0;
 	int no1_bigger;
@@ -224,7 +239,12 @@ void addBCD(unsigned char* result, unsigned char const* one, unsigned char const
 		*bitnoresult = bit_i+1;
 }
 
-int bcd_compare(unsigned char* p_n1, unsigned char* p_n2,int *bitno1,int *bitno2) {
+//input parameters:	two BCD arrays to be compared, and their no's of bits
+//
+//what it does:		compares the two numbers, returns 1 if no1>no2
+//											  returns -1 if no1<no2
+//											  returns 0 if no1==no2
+int bcd_compare(unsigned char const* p_n1, unsigned char const* p_n2,int *bitno1,int *bitno2) {
 
 	int size = ((bitno1 > bitno2) ? bitno1 : bitno2); //if bitno1==bitno2 then condition false and second result, which would be the same as bitno1
 
