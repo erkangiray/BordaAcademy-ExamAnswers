@@ -4,4 +4,20 @@ In Spring 2020, I applied for an internship/training programme at Borda technolo
 
 They sent an eight questions application exam. These were my answers for the questions that demanded some coding.
 
-BCDq4 can take strings of decimal base numbers, and can convert them to binary coded decimals. 10 becomes 0000 0001 0000 0000.
+BCDq4 can take strings of decimal base numbers, and can convert them to binary coded decimals. It does this by taking an integer, and collecting the BCD information in an unsigned character array. An unsigned character is 8 bits, 2 nibbles, and one byte, so it is supposed to hold the BCD digits. 
+
+The first digit being 0xFF which means 1111 1111, means that the BCD number is negative.
+The first digit being 0x0 which means 0000 0000, means that the BCD number is positive.
+The maximum digit size of the BCD number can be 99, because the unsigned char array being used has 100 elements, the first one being the sign byte. 
+Then, starting from the last byte, the array actually holds the digits.
+
+The code can also add and subtract BCD numbers. Addition is done taking care of BCD overflows, meaning when a digit overflows, the overflow will be 16 whereas it should've been 10, so a six is returned to the bit from which it overflowed. This can be useful for anyone who wanted to know how this can be done using C.
+
+Subtraction is handled in a way that is a bit clunky. Two situations are a bit more straightforward, if in the subtraction one BCD number has more digits than the other, since in this case we know that the result will have the same sign as the one who has more digis.       100+(-99)=+1  and 99+(-100)=-1 Result has same sign.
+
+If this is not the case, use 2's complement to do the subtraction, making sure to make the proper corrections 2's complement operations require. Such as, if there hasn't been a carry to the upper nibble while doing the addition, then this means the result is negative, and it stays as it is, the result is correct.
+
+But if the number has produced a carry, then 0001 0110 is not actually 22 (Also take in mind that our BCDs cannot have digits greater than 9!!) but it is plus six, so it should be fixed.
+
+This is corrected by the loop in the next step. Counting down from size, if the digit of the result checks true for whether it has produced a carry or not, the sign is determined. If however, for example a subtraction such as 1123-1126 produced digits like 000(-3)   then counting down from size we cannot determine the sign, so we need to continue until we get to minus three, which is in this case 0000 0011, which is correct and needs not be fixed, and immediately determines the sign regardless of what follows it. 
+
